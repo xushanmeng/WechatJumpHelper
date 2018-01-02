@@ -159,7 +159,7 @@ public class Helper {
                             endX = j;
 
                             if (endX - startX < PIECE_TOP_PIXELS) {
-                                //规避井盖的BUG，如果不是棋子，则重新计算
+                                //规避井盖的BUG，像素点不够长，则重新计算
                                 startX = 0;
                                 endX = 0;
                             }
@@ -172,7 +172,7 @@ public class Helper {
                         }
                     }
                     if (startX != 0 && piece.x == 0) {
-                        piece.x = startX + (endX - startX) / 2;
+                        piece.x = (startX + endX) / 2;
                     }
                 }
                 if(piece.x == 0 || piece.y == 0){
