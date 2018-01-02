@@ -22,10 +22,15 @@ import static com.tencent.wechatjump.helper.util.DebugUtil.*;
 public class Helper {
 
 
+    private double jumpParam;
     private StringBuilder debugInfo;
     private int cacheIndex = 0;
     private File cacheDir = new File("imageCaches");
     private File markDir = new File("imageMarks");
+
+    public Helper(double jumpParam) {
+        this.jumpParam = jumpParam;
+    }
 
     public void start() {
         if (!DEBUG) {
@@ -90,7 +95,7 @@ public class Helper {
                     //保存缓存图片
                     result = HelperUtil.execute("cp ./screen.png " + cacheFile.getAbsolutePath());
                     if (!result) {
-                        System.out.println("截屏缓存保存失败");
+                        System.out.println(cacheIndex + ". 截屏缓存保存失败");
                     }
                     cacheTime = System.currentTimeMillis() - tempTime;
                     tempTime += cacheTime;
@@ -106,7 +111,7 @@ public class Helper {
                 final int screenHeight = image.getHeight();
                 debugInfo.append("屏幕参数 ").append(screenWidth).append("x").append(screenHeight).append("\n");
                 if (screenWidth == 0 || screenHeight == 0) {
-                    System.out.println("截屏图片读取错误");
+                    System.out.println(cacheIndex + ". 截屏图片读取错误");
                     Thread.sleep(5000);
                     continue;
                 }
@@ -170,6 +175,11 @@ public class Helper {
                         piece.x = startX + (endX - startX) / 2;
                     }
                 }
+                if(piece.x == 0 || piece.y == 0){
+                    System.out.println(cacheIndex + ". 未找到棋子坐标");
+                    Thread.sleep(5000);
+                    continue;
+                }
 
                 //棋子纵坐标从底部边缘调整到底部中心
                 piece.y -= PIECE_BOTTOM_CENTER_SHIFT;
@@ -197,6 +207,11 @@ public class Helper {
                     if (firstPixcel != null) {
                         break;
                     }
+                }
+                if(firstPixcel == null){
+                    System.out.println(cacheIndex + ". 未找到目标落点坐标");
+                    Thread.sleep(5000);
+                    continue;
                 }
                 debugInfo.append("落点首个像素 firstPixel").append(firstPixcel).append("\n");
 
@@ -249,7 +264,7 @@ public class Helper {
                 tempTime += calculateTime;
                 if (!DEBUG) {
                     //执行跳跃
-                    long pressTime = (long) (distance * Constants.JUMP_PARAM);
+                    long pressTime = (long) (distance * jumpParam);
                     System.out.println("模拟按压" + pressTime + "ms.");
                     final int PRESS_Y = HelperUtil.transH(screenHeight, Constants.PRESS_Y);
                     final int PRESS_X = HelperUtil.transW(screenWidth, Constants.PRESS_X);
