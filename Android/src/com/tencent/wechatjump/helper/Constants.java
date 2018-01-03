@@ -11,12 +11,12 @@ public class Constants {
      * 1600x2560机型推荐0.92
      * 1440x2560机型推荐1.039
      * 1080x1920机型推荐1.392
-     * 720x1080机型推荐 2.078
+     * 720x1280机型推荐 2.078
      */
     public static final double JUMP_PARAM_1600x2560 = 0.92;
-    public static final double JUMP_PARAM_1440x2560 = 1.039;
-    public static final double JUMP_PARAM_1080x1920 = 1.392;
-    public static final double JUMP_PARAM_720x1080 = 2.078;
+    public static final double JUMP_PARAM_1440x2560 = 1.0392;
+    public static final double JUMP_PARAM_1080x1920 = 1.39;
+    public static final double JUMP_PARAM_720x1280 = 2.078;
 
 
     /* *************************************************************************************
