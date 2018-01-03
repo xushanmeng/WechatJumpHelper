@@ -63,7 +63,7 @@ public class Main {
             case "1440x2560":
                 jumpParam = Constants.JUMP_PARAM_1440x2560;
                 break;
-            case "1080x192":
+            case "1080x1920":
                 jumpParam = Constants.JUMP_PARAM_1080x1920;
                 break;
             case "720x1080":
