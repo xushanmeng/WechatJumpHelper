@@ -4,6 +4,7 @@ import com.tencent.wechatjump.helper.bean.DesType;
 import com.tencent.wechatjump.helper.bean.Pixel;
 import com.tencent.wechatjump.helper.util.Color;
 import com.tencent.wechatjump.helper.util.DesTypeChecker;
+import com.tencent.wechatjump.helper.util.FileUtil;
 import com.tencent.wechatjump.helper.util.HelperUtil;
 
 import java.awt.Font;
@@ -93,7 +94,9 @@ public class Helper {
                         oldFile.delete();
                     }
                     //保存缓存图片
-                    result = HelperUtil.execute("cp ./screen.png " + cacheFile.getAbsolutePath());
+                    File imageFile = new File("screen.png");
+                    result = FileUtil.copyFile(imageFile,cacheFile);
+                    imageFile.deleteOnExit();
                     if (!result) {
                         System.out.println(cacheIndex + ". 截屏缓存保存失败");
                     }
