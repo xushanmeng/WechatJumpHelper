@@ -59,8 +59,8 @@ public class Constants {
     public static final int DES_MIN_SHIFT = 33;//目标落点物体上顶点到中心的最小距离，如果计算的落点距离上顶点小于这个数值，将无法落稳
 
     //模拟按压位置，放到重新开始的按钮上，可以自动重新开始
-    public static final int PRESS_X = 720;
-    public static final int PRESS_Y = 2116;
+    public static final int RESTART_PRESS_X = 720;
+    public static final int RESTART_PRESS_Y = 2116;
 
     //缓存图片最大数量
     public static final int CACHE_FILE_MAX = 1000;

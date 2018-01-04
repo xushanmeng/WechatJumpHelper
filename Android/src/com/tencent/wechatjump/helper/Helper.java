@@ -180,6 +180,14 @@ public class Helper {
                 }
                 if(piece.x == 0 || piece.y == 0){
                     System.out.println(cacheIndex + ". 未找到棋子坐标");
+                    final int PRESS_Y = HelperUtil.transH(screenHeight, Constants.RESTART_PRESS_Y);
+                    final int PRESS_X = HelperUtil.transW(screenWidth, Constants.RESTART_PRESS_X);
+                    HelperUtil.execute("adb shell input swipe "
+                            + PRESS_X + " "
+                            + PRESS_Y + " "
+                            + PRESS_X + " "
+                            + PRESS_Y + " "
+                            + 100);
                     Thread.sleep(5000);
                     continue;
                 }
@@ -269,8 +277,8 @@ public class Helper {
                     //执行跳跃
                     long pressTime = (long) (distance * jumpParam);
                     System.out.println("模拟按压" + pressTime + "ms.");
-                    final int PRESS_Y = HelperUtil.transH(screenHeight, Constants.PRESS_Y);
-                    final int PRESS_X = HelperUtil.transW(screenWidth, Constants.PRESS_X);
+                    final int PRESS_Y = HelperUtil.transH(screenHeight, screenHeight/2 -250 + (int)(Math.random() * 500));
+                    final int PRESS_X = HelperUtil.transW(screenWidth, screenWidth/2 - 150 + (int)(Math.random() * 300));
                     HelperUtil.execute("adb shell input swipe "
                             + PRESS_X + " "
                             + PRESS_Y + " "
