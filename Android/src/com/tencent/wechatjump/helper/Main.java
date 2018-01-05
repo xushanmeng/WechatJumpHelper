@@ -70,21 +70,22 @@ public class Main {
                 jumpParam = Constants.JUMP_PARAM_720x1280;
                 break;
         }
+        Scanner scanner = new Scanner(System.in);
         if (jumpParam == 0) {
             System.out.print("暂时不兼容您的手机分辨率，请直接输入您的跳跃系数：");
-        }
-        System.out.print("推荐跳跃系数为"+jumpParam+"，是否使用系统推荐跳跃系数？(y/n)");
-        Scanner scanner = new Scanner(System.in);
-        while (true) {
-            String line = scanner.nextLine();
-            if("y".equalsIgnoreCase(line.trim()) || "yes".equalsIgnoreCase(line.trim())){
-                break;
-            }else if("n".equalsIgnoreCase(line.trim()) || "no".equalsIgnoreCase(line.trim())){
-                jumpParam = 0;
-                System.out.print("请输入您的跳跃系数：");
-                break;
-            }else{
-                System.out.print("命令输入错误，请重新输入：");
+        }else {
+            System.out.print("推荐跳跃系数为" + jumpParam + "，是否使用系统推荐跳跃系数？(y/n)");
+            while (true) {
+                String line = scanner.nextLine();
+                if ("y".equalsIgnoreCase(line.trim()) || "yes".equalsIgnoreCase(line.trim())) {
+                    break;
+                } else if ("n".equalsIgnoreCase(line.trim()) || "no".equalsIgnoreCase(line.trim())) {
+                    jumpParam = 0;
+                    System.out.print("请输入您的跳跃系数：");
+                    break;
+                } else {
+                    System.out.print("命令输入错误，请重新输入：");
+                }
             }
         }
         while (jumpParam == 0) {
