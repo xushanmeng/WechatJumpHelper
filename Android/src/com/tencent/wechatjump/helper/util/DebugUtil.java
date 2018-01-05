@@ -12,5 +12,5 @@ public class DebugUtil {
     /**
      * 调试缓存图片的序号
      */
-    public final static int DEBUG_IMAGE = 6;
+    public final static int DEBUG_IMAGE = 10010;
 }

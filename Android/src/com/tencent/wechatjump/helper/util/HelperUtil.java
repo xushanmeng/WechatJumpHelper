@@ -18,7 +18,7 @@ public class HelperUtil {
             int result = process.waitFor();
             if (result != 0) {
                 System.out.println("Failed to execute \"" + cmd + "\", result code is " + result);
-            }else{
+            } else {
                 return true;
             }
         } catch (Exception e) {
@@ -157,8 +157,8 @@ public class HelperUtil {
         int height = pixels.length;
         if (pixel.x < transW(width, Constants.LEFT_BORDER)
                 || pixel.x > width - transW(width, Constants.RIGHT_BORDER)
-                || pixel.y < transH(height, Constants.TOP_BORDER)
-                || pixel.y > height - transH(height, Constants.BOTTOM_BORDER)) {
+                || pixel.y < transH(height, adjustTopBorder(width,height))
+                || pixel.y > height - transH(height, adjustBottomBorder(width,height))) {
             return false;
         }
         return true;
@@ -176,6 +176,14 @@ public class HelperUtil {
      */
     public static final int transH(int screenHeight, int sourceValue) {
         return sourceValue * screenHeight / Constants.BASE_SCREEN_HEIGHT;
+    }
+
+    public static final int adjustTopBorder(int screenWidth, int screenHeight) {
+        return Constants.TOP_BORDER + (screenHeight * Constants.BASE_SCREEN_WIDTH / screenWidth - Constants.BASE_SCREEN_HEIGHT) / 2;
+    }
+
+    public static final int adjustBottomBorder(int screenWidth, int screenHeight) {
+        return Constants.BOTTOM_BORDER + (screenHeight * Constants.BASE_SCREEN_WIDTH / screenWidth - Constants.BASE_SCREEN_HEIGHT) / 2;
     }
 
 }

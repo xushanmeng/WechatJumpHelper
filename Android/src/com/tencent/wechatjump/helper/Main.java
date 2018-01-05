@@ -1,5 +1,6 @@
 package com.tencent.wechatjump.helper;
 
+import com.tencent.wechatjump.helper.util.DebugUtil;
 import com.tencent.wechatjump.helper.util.FileUtil;
 import com.tencent.wechatjump.helper.util.HelperUtil;
 
@@ -21,7 +22,10 @@ import javax.imageio.ImageIO;
 public class Main {
 
     public static void main(String[] args) {
-
+        if(DebugUtil.DEBUG){
+            new Helper(1).start();
+            return;
+        }
         if (!Constants.BASE_DIR.exists()) {
             Constants.BASE_DIR.mkdirs();
         }
@@ -35,6 +39,9 @@ public class Main {
             } else {
                 System.out.println("该程序暂不支持" + system);
                 return;
+            }
+            if(Constants.ADB_PATH.exists()){
+                Constants.ADB_PATH.delete();
             }
             InputStream is = Main.class.getClassLoader().getResourceAsStream(adb);
             boolean result = FileUtil.copy(is, new FileOutputStream(Constants.ADB_PATH));

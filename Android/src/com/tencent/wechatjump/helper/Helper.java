@@ -128,8 +128,8 @@ public class Helper {
                     }
                 }
 
-                final int TOP_BORDER = HelperUtil.transH(screenHeight, Constants.TOP_BORDER);
-                final int BOTTOM_BORDER = HelperUtil.transH(screenHeight, Constants.BOTTOM_BORDER);
+                final int TOP_BORDER = HelperUtil.transH(screenHeight, HelperUtil.adjustTopBorder(screenWidth,screenHeight));
+                final int BOTTOM_BORDER = HelperUtil.transH(screenHeight, HelperUtil.adjustBottomBorder(screenWidth,screenHeight));
                 final int LEFT_BORDER = HelperUtil.transW(screenWidth, Constants.LEFT_BORDER);
                 final int RIGHT_BORDER = HelperUtil.transW(screenWidth, Constants.RIGHT_BORDER);
 
