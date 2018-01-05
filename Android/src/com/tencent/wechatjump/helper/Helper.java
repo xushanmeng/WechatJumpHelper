@@ -22,12 +22,11 @@ import static com.tencent.wechatjump.helper.util.DebugUtil.*;
 
 public class Helper {
 
-
     private double jumpParam;
     private StringBuilder debugInfo;
     private int cacheIndex = 0;
-    private File cacheDir = new File("imageCaches");
-    private File markDir = new File("imageMarks");
+    private File cacheDir = new File(Constants.BASE_DIR, "imageCaches");
+    private File markDir = new File(Constants.BASE_DIR, "imageMarks");
 
     public Helper(double jumpParam) {
         this.jumpParam = jumpParam;
@@ -38,7 +37,7 @@ public class Helper {
             if (!cacheDir.exists()) {
                 cacheDir.mkdirs();
             }
-            if(!markDir.exists()){
+            if (!markDir.exists()) {
                 markDir.mkdirs();
             }
             String[] filenames = cacheDir.list();
@@ -46,10 +45,10 @@ public class Helper {
                 String[] seg = filename.split("\\.");
                 try {
                     int index = Integer.valueOf(seg[0]);
-                    if(index > cacheIndex){
+                    if (index > cacheIndex) {
                         cacheIndex = index;
                     }
-                }catch (Exception e){
+                } catch (Exception e) {
                     continue;
                 }
             }
@@ -67,9 +66,8 @@ public class Helper {
                 long tempTime = startTime;
                 File cacheFile;
                 if (!DEBUG) {
-                    //获取截图
-                    boolean result;
-                    result = HelperUtil.execute("adb shell screencap -p /sdcard/screen.png");
+                    // 获取截图
+                    boolean result = HelperUtil.execute(Constants.ADB_PATH.getAbsolutePath(), "shell", "screencap", "-p", "/sdcard/screen.png");
                     if (!result) {
                         System.out.println("截屏失败");
                         Thread.sleep(5000);
@@ -78,7 +76,7 @@ public class Helper {
                         screencapTime = System.currentTimeMillis() - tempTime;
                     }
                     tempTime += screencapTime;
-                    result = HelperUtil.execute("adb pull /sdcard/screen.png .");
+                    result = HelperUtil.execute(Constants.ADB_PATH.getAbsolutePath(), "pull", "/sdcard/screen.png", Constants.BASE_DIR.getAbsolutePath());
                     if (!result) {
                         System.out.println("下载截屏失败");
                         Thread.sleep(5000);
@@ -89,13 +87,13 @@ public class Helper {
                     tempTime += downloadTime;
                     cacheFile = new File(cacheDir, (++cacheIndex) + ".png");
                     if (cacheIndex > Constants.CACHE_FILE_MAX) {
-                        //最多缓存1000张图片
+                        // 最多缓存1000张图片
                         File oldFile = new File(cacheDir, (cacheIndex - Constants.CACHE_FILE_MAX) + ".png");
                         oldFile.delete();
                     }
-                    //保存缓存图片
-                    File imageFile = new File("screen.png");
-                    result = FileUtil.copyFile(imageFile,cacheFile);
+                    // 保存缓存图片
+                    File imageFile = new File(Constants.BASE_DIR, "screen.png");
+                    result = FileUtil.copyFile(imageFile, cacheFile);
                     imageFile.deleteOnExit();
                     if (!result) {
                         System.out.println(cacheIndex + ". 截屏缓存保存失败");
@@ -108,11 +106,12 @@ public class Helper {
                     tempTime = System.currentTimeMillis();
                 }
 
-                //读取图片像素
+                // 读取图片像素
                 BufferedImage image = ImageIO.read(cacheFile);
                 final int screenWidth = image.getWidth();
                 final int screenHeight = image.getHeight();
-                debugInfo.append("屏幕参数 ").append(screenWidth).append("x").append(screenHeight).append("\n");
+                debugInfo.append("屏幕参数 ").append(screenWidth).append("x")
+                        .append(screenHeight).append("\n");
                 if (screenWidth == 0 || screenHeight == 0) {
                     System.out.println(cacheIndex + ". 截屏图片读取错误");
                     Thread.sleep(5000);
@@ -136,11 +135,11 @@ public class Helper {
 
                 final int PIECE_WIDTH_PIXELS = HelperUtil.transW(screenWidth, Constants.PIECE_WIDTH_PIXELS);
                 final int PIECE_TOP_PIXELS = HelperUtil.transW(screenWidth, Constants.PIECE_TOP_PIXELS);
-                final int PIECE_BOTTOM_CENTER_SHIFT = HelperUtil.transH(screenHeight, Constants.PIECE_BOTTOM_CENTER_SHIFT);
+                final int PIECE_BOTTOM_CENTER_SHIFT = HelperUtil.transW(screenWidth, Constants.PIECE_BOTTOM_CENTER_SHIFT);
 
-                final int DES_MIN_SHIFT = HelperUtil.transH(screenHeight, Constants.DES_MIN_SHIFT);
+                final int DES_MIN_SHIFT = HelperUtil.transW(screenWidth, Constants.DES_MIN_SHIFT);
 
-                /* 计算棋子位置 */
+				/* 计算棋子位置 */
                 Pixel piece = new Pixel();
                 for (int i = TOP_BORDER; i < screenHeight - BOTTOM_BORDER; i++) {
                     int startX = 0;
@@ -149,28 +148,26 @@ public class Helper {
                         int red = Color.red(pixels[i][j].color);
                         int green = Color.green(pixels[i][j].color);
                         int blue = Color.blue(pixels[i][j].color);
-                        if (50 < red && red < 55
-                                && 50 < green && green < 55
-                                && 55 < blue && blue < 65) {//棋子顶部颜色
-                            //如果侦测到棋子相似颜色，记录下开始点
+                        if (50 < red && red < 55 && 50 < green && green < 55
+                                && 55 < blue && blue < 65) {// 棋子顶部颜色
+                            // 如果侦测到棋子相似颜色，记录下开始点
                             if (startX == 0) {
                                 startX = j;
                                 endX = 0;
                             }
                         } else if (endX == 0) {
-                            //记录下结束点
+                            // 记录下结束点
                             endX = j;
 
                             if (endX - startX < PIECE_TOP_PIXELS) {
-                                //规避井盖的BUG，像素点不够长，则重新计算
+                                // 规避井盖的BUG，像素点不够长，则重新计算
                                 startX = 0;
                                 endX = 0;
                             }
                         }
-                        if (50 < red && red < 60
-                                && 55 < green && green < 65
-                                && 95 < blue && blue < 105) {//棋子底部的颜色
-                            //最后探测到的颜色就是棋子的底部像素
+                        if (50 < red && red < 60 && 55 < green && green < 65
+                                && 95 < blue && blue < 105) {// 棋子底部的颜色
+                            // 最后探测到的颜色就是棋子的底部像素
                             piece.y = i;
                         }
                     }
@@ -178,39 +175,34 @@ public class Helper {
                         piece.x = (startX + endX) / 2;
                     }
                 }
-                if(piece.x == 0 || piece.y == 0){
+                if (piece.x == 0 || piece.y == 0) {
                     System.out.println(cacheIndex + ". 未找到棋子坐标");
                     final int PRESS_Y = HelperUtil.transH(screenHeight, Constants.RESTART_PRESS_Y);
                     final int PRESS_X = HelperUtil.transW(screenWidth, Constants.RESTART_PRESS_X);
-                    HelperUtil.execute("adb shell input swipe "
-                            + PRESS_X + " "
-                            + PRESS_Y + " "
-                            + PRESS_X + " "
-                            + PRESS_Y + " "
-                            + 100);
+                    HelperUtil.execute(Constants.ADB_PATH.getAbsolutePath(), "shell", "input", "swipe", PRESS_X + "", PRESS_Y + "", PRESS_X + "", PRESS_Y + "", 100 + "");
                     Thread.sleep(5000);
                     continue;
                 }
 
-                //棋子纵坐标从底部边缘调整到底部中心
+                // 棋子纵坐标从底部边缘调整到底部中心
                 piece.y -= PIECE_BOTTOM_CENTER_SHIFT;
 
                 System.out.print(cacheIndex + ". 棋子坐标点[" + piece.x + ", " + piece.y + "], ");
 
-                //计算目标位置
+                // 计算目标位置
                 Pixel des = new Pixel();
 
-                Pixel firstPixcel = null;//目标落点最顶部首个像素位置
+                Pixel firstPixcel = null;// 目标落点最顶部首个像素位置
 
-                //双重循环寻找落点第一个像素
+                // 双重循环寻找落点第一个像素
                 for (int i = TOP_BORDER; i < screenHeight - BOTTOM_BORDER; i++) {
                     for (int j = LEFT_BORDER; j < screenWidth - RIGHT_BORDER; j++) {
                         if (piece.x - PIECE_WIDTH_PIXELS / 2 < j && j < piece.x + PIECE_WIDTH_PIXELS / 2) {
-                            //忽略和棋子处于同一垂直线的这些像素
+                            // 忽略和棋子处于同一垂直线的这些像素
                             continue;
                         }
                         if (!Color.compareColor(pixels[i][j].color, pixels[i][0].color, 12)) {
-                            //发现色差，记录下落点顶部第一个像素
+                            // 发现色差，记录下落点顶部第一个像素
                             firstPixcel = pixels[i][j];
                             break;
                         }
@@ -219,15 +211,15 @@ public class Helper {
                         break;
                     }
                 }
-                if(firstPixcel == null){
+                if (firstPixcel == null) {
                     System.out.println(cacheIndex + ". 未找到目标落点坐标");
                     Thread.sleep(5000);
                     continue;
                 }
-                debugInfo.append("落点首个像素 firstPixel").append(firstPixcel).append("\n");
+                debugInfo.append("落点首个像素 firstPixel").append(firstPixcel)
+                        .append("\n");
 
-                //计算目标点类型
-
+                // 计算目标点类型
 
                 Pixel whitePointCenter = findWhitePointCenter(pixels, firstPixcel);
                 Pixel puerCenter = findPuerCenter(pixels, firstPixcel);
@@ -236,7 +228,7 @@ public class Helper {
 
                 String hasWhitePoint;
                 if (whitePointCenter != null) {
-                    //如果有白点，那目标落点为白点中心
+                    // 如果有白点，那目标落点为白点中心
                     des = whitePointCenter;
                     hasWhitePoint = "有靶点";
                 } else {
@@ -244,7 +236,7 @@ public class Helper {
                     if (puerCenter != null) {
                         des = puerCenter;
                     } else {
-                        //如果是其他类型且没有靶点，通过斜率计算落点
+                        // 如果是其他类型且没有靶点，通过斜率计算落点
                         int count = 0;
                         for (int i = firstPixcel.x; i < screenWidth - RIGHT_BORDER; i++) {
                             if (Color.compareColor(pixels[firstPixcel.y][i].color, pixels[firstPixcel.y][firstPixcel.x].color, 10)) {
@@ -255,7 +247,7 @@ public class Helper {
                         }
 
                         des.x = firstPixcel.x + count / 2;
-                        float k;//斜率
+                        float k;// 斜率
                         if ((firstPixcel.y - piece.y) * 1.0f / (firstPixcel.x - piece.x) < 0) {
                             k = Constants.K1;
                         } else {
@@ -268,34 +260,29 @@ public class Helper {
                     }
                 }
 
-                /* 计算距离 */
+				/* 计算距离 */
                 double distance = HelperUtil.calculateDistance(piece, des);
                 System.out.print("目标落点[" + des.x + ", " + des.y + "], " + desType.getName() + ", " + hasWhitePoint + ", 距离" + Math.round(distance) + "px, ");
                 calculateTime = System.currentTimeMillis() - tempTime;
                 tempTime += calculateTime;
                 if (!DEBUG) {
-                    //执行跳跃
+                    // 执行跳跃
                     long pressTime = (long) (distance * jumpParam);
                     System.out.println("模拟按压" + pressTime + "ms.");
-                    final int PRESS_Y = HelperUtil.transH(screenHeight, screenHeight/2 -250 + (int)(Math.random() * 500));
-                    final int PRESS_X = HelperUtil.transW(screenWidth, screenWidth/2 - 150 + (int)(Math.random() * 300));
-                    HelperUtil.execute("adb shell input swipe "
-                            + PRESS_X + " "
-                            + PRESS_Y + " "
-                            + PRESS_X + " "
-                            + PRESS_Y + " "
-                            + pressTime);
+                    final int PRESS_Y = HelperUtil.transH(screenHeight, screenHeight / 2 - 250 + (int) (Math.random() * 500));
+                    final int PRESS_X = HelperUtil.transW(screenWidth, screenWidth / 2 - 150 + (int) (Math.random() * 300));
+                    HelperUtil.execute(Constants.ADB_PATH.getAbsolutePath(), "shell", "input", "swipe", PRESS_X + "", PRESS_Y + "", PRESS_X + "", PRESS_Y + "", pressTime + "");
                     exeJumpTime = System.currentTimeMillis() - tempTime;
                     tempTime += exeJumpTime;
-                    //保存带标记的图像
+                    // 保存带标记的图像
                     Graphics graphics = image.getGraphics();
                     graphics.setColor(java.awt.Color.RED);
                     graphics.drawLine(des.x, des.y, piece.x, piece.y);
-                    graphics.setFont(new Font("宋体", Font.BOLD, HelperUtil.transW(screenWidth,60)));
-                    graphics.drawString(desType.getName() + "，" + hasWhitePoint, HelperUtil.transW(screenWidth,10), HelperUtil.transW(screenWidth,70));
-                    graphics.drawString("跳跃距离" + Math.round(distance) + "px", HelperUtil.transW(screenWidth,10), HelperUtil.transW(screenWidth,135));
-                    graphics.drawString("模拟按压" + pressTime + "ms", HelperUtil.transW(screenWidth,10), HelperUtil.transW(screenWidth,200));
-                    ImageIO.write(image, "png", new File(markDir,cacheIndex+"_mark.png"));
+                    graphics.setFont(new Font("宋体", Font.BOLD, HelperUtil.transW(screenWidth, 60)));
+                    graphics.drawString(desType.getName() + "，" + hasWhitePoint, HelperUtil.transW(screenWidth, 10), HelperUtil.transW(screenWidth, 70));
+                    graphics.drawString("跳跃距离" + Math.round(distance) + "px", HelperUtil.transW(screenWidth, 10), HelperUtil.transW(screenWidth, 135));
+                    graphics.drawString("模拟按压" + pressTime + "ms", HelperUtil.transW(screenWidth, 10), HelperUtil.transW(screenWidth, 200));
+                    ImageIO.write(image, "png", new File(markDir, cacheIndex + "_mark.png"));
                     recacheTime = System.currentTimeMillis() - tempTime;
                 } else {
                     System.out.println("DEBUG");
@@ -308,14 +295,13 @@ public class Helper {
                 System.out.print("计算耗时" + calculateTime + "ms, ");
                 System.out.print("跳跃耗时" + exeJumpTime + "ms, ");
                 System.out.print("标记耗时" + recacheTime + "ms, ");
-                System.out.println("总耗时" + (System.currentTimeMillis() - startTime) + "ms\n");
+                System.out.println("总耗时"
+                        + (System.currentTimeMillis() - startTime) + "ms\n");
 
-                /*停留一会，保证棋子落稳*/
-                if (desType == DesType.COVER
-                        || desType == DesType.CUBE
-                        || desType == DesType.SHOP
-                        || desType == DesType.DISC) {
-                    //特殊类型的落点，停留时间长了会加分
+				/* 停留一会，保证棋子落稳 */
+                if (desType == DesType.COVER || desType == DesType.CUBE
+                        || desType == DesType.SHOP || desType == DesType.DISC) {
+                    // 特殊类型的落点，停留时间长了会加分
                     Thread.sleep(2000);
                 } else {
                     Thread.sleep(1500);
@@ -348,8 +334,10 @@ public class Helper {
         int puerWidth = puerRight.x - puerLeft.x + 1;
         int puerHeight = puerBottom.y - puerTop.y + 1;
         int distanceMin = HelperUtil.transW(screenWidth, 30);
-        if (HelperUtil.transW(screenWidth, 110) <= puerWidth && puerWidth <= HelperUtil.transW(screenWidth, 610)
-                && HelperUtil.transH(screenHeight, 64) <= puerHeight && puerHeight <= HelperUtil.transH(screenHeight, 350)
+        if (HelperUtil.transW(screenWidth, 110) <= puerWidth
+                && puerWidth <= HelperUtil.transW(screenWidth, 610)
+                && HelperUtil.transW(screenWidth, 64) <= puerHeight
+                && puerHeight <= HelperUtil.transW(screenWidth, 350)
                 && HelperUtil.calculateDistance(puerTop, puerLeft) > distanceMin
                 && HelperUtil.calculateDistance(puerTop, puerRight) > distanceMin
                 && HelperUtil.calculateDistance(puerBottom, puerLeft) > distanceMin
@@ -367,15 +355,15 @@ public class Helper {
     private Pixel findWhitePointCenter(Pixel[][] pixels, Pixel firstPixcel) {
         int screenWidth = pixels[0].length;
         int screenHeight = pixels.length;
-        //尝试寻找白点
+        // 尝试寻找白点
         Pixel whitePointBase = null;
         final int WHITE_POINT_COLOR = 0xf5f5f5;
         int widthShift = HelperUtil.transW(screenWidth, 15);
-        int heightShift = HelperUtil.transH(screenHeight, 200);
+        int heightShift = HelperUtil.transW(screenWidth, 200);
         for (int i = firstPixcel.y; i < firstPixcel.y + heightShift; i++) {
             for (int j = firstPixcel.x - widthShift; j < firstPixcel.x + widthShift; j++) {
                 if (Color.compareColor(pixels[i][j].color, WHITE_POINT_COLOR)) {
-                    //发现白点相似颜色
+                    // 发现白点相似颜色
                     whitePointBase = pixels[i][j];
                     break;
                 }
@@ -388,8 +376,8 @@ public class Helper {
             return null;
         }
         if (DesTypeChecker.checkBumf(pixels, firstPixcel)) {
-            //如果是卫生纸,修正白色点的基准
-            whitePointBase = pixels[firstPixcel.y + HelperUtil.transH(screenHeight, 62)][firstPixcel.x];
+            // 如果是卫生纸,修正白色点的基准
+            whitePointBase = pixels[firstPixcel.y + HelperUtil.transW(screenWidth, 62)][firstPixcel.x];
         }
 
         Pixel[] vertexs = HelperUtil.findVertexs(pixels, whitePointBase);
@@ -399,17 +387,16 @@ public class Helper {
         Pixel whitePointBottom = vertexs[3];
         Pixel whitePointCenter;
 
-        debugInfo.append("WhitePointBorder[")
-                .append(whitePointLeft.x).append(", ")
-                .append(whitePointTop.y).append(", ")
+        debugInfo.append("WhitePointBorder[").append(whitePointLeft.x)
+                .append(", ").append(whitePointTop.y).append(", ")
                 .append(whitePointRight.x).append(", ")
                 .append(whitePointBottom.y).append("]\n");
         int whitePointWidth = whitePointRight.x - whitePointLeft.x + 1;
         int whitePointHeight = whitePointBottom.y - whitePointTop.y + 1;
         if (HelperUtil.transW(screenWidth, Constants.WHITE_POINT_MIM_WIDTH) <= whitePointWidth
                 && whitePointWidth <= HelperUtil.transW(screenWidth, Constants.WHITE_POINT_MAX_WIDTH)
-                && HelperUtil.transH(screenHeight, Constants.WHITE_POINT_MIM_HEIGHT) <= whitePointHeight
-                && whitePointHeight <= HelperUtil.transH(screenHeight, Constants.WHITE_POINT_MAX_HEIGHT)) {
+                && HelperUtil.transW(screenWidth, Constants.WHITE_POINT_MIM_HEIGHT) <= whitePointHeight
+                && whitePointHeight <= HelperUtil.transW(screenWidth, Constants.WHITE_POINT_MAX_HEIGHT)) {
             whitePointCenter = pixels[(whitePointTop.y + whitePointBottom.y) / 2][(whitePointLeft.x + whitePointRight.x) / 2];
         } else {
             whitePointCenter = null;

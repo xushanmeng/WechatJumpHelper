@@ -42,13 +42,13 @@ public class DesTypeChecker {
         int height = pixels.length;
 
         int x1 = firstPixcel.x;
-        int y1 = firstPixcel.y + HelperUtil.transH(height, 30);
+        int y1 = firstPixcel.y + HelperUtil.transW(width, 30);
         int x2 = firstPixcel.x + HelperUtil.transW(width, 40);
-        int y2 = firstPixcel.y + HelperUtil.transH(height, 260);
+        int y2 = firstPixcel.y + HelperUtil.transW(width, 260);
         int x3 = firstPixcel.x + HelperUtil.transW(width, 40);
-        int y3 = firstPixcel.y + HelperUtil.transH(height, 320);
+        int y3 = firstPixcel.y + HelperUtil.transW(width, 320);
         int x4 = firstPixcel.x + HelperUtil.transW(width, -40);
-        int y4 = firstPixcel.y + HelperUtil.transH(height, 320);
+        int y4 = firstPixcel.y + HelperUtil.transW(width, 320);
 
         if (!Color.compareColor(pixels[y1][x1].color, 0x6b9cf8)) {
             return false;
@@ -73,13 +73,13 @@ public class DesTypeChecker {
         int height = pixels.length;
 
         int x1 = firstPixcel.x;
-        int y1 = firstPixcel.y + HelperUtil.transH(height, 30);
+        int y1 = firstPixcel.y + HelperUtil.transW(width, 30);
         int x2 = firstPixcel.x + HelperUtil.transW(width, 25);
-        int y2 = firstPixcel.y + HelperUtil.transH(height, 280);
+        int y2 = firstPixcel.y + HelperUtil.transW(width, 280);
         int x3 = firstPixcel.x + HelperUtil.transW(width, -25);
-        int y3 = firstPixcel.y + HelperUtil.transH(height, 280);
+        int y3 = firstPixcel.y + HelperUtil.transW(width, 280);
         int x4 = firstPixcel.x + HelperUtil.transW(width, 5);
-        int y4 = firstPixcel.y + HelperUtil.transH(height, 320);
+        int y4 = firstPixcel.y + HelperUtil.transW(width, 320);
 
         if (!Color.compareColor(pixels[y1][x1].color, 0x757575)) {
             return false;
@@ -104,13 +104,13 @@ public class DesTypeChecker {
         int height = pixels.length;
 
         int x1 = firstPixcel.x;
-        int y1 = firstPixcel.y + HelperUtil.transH(height, 20);
+        int y1 = firstPixcel.y + HelperUtil.transW(width, 20);
         int x2 = firstPixcel.x + HelperUtil.transW(width, 10);
-        int y2 = firstPixcel.y + HelperUtil.transH(height, 315);
+        int y2 = firstPixcel.y + HelperUtil.transW(width, 315);
         int x3 = firstPixcel.x + HelperUtil.transW(width, -10);
-        int y3 = firstPixcel.y + HelperUtil.transH(height, 320);
+        int y3 = firstPixcel.y + HelperUtil.transW(width, 320);
         int x4 = firstPixcel.x + HelperUtil.transW(width, 60);
-        int y4 = firstPixcel.y + HelperUtil.transH(height, 360);
+        int y4 = firstPixcel.y + HelperUtil.transW(width, 360);
 
         if (!Color.compareColor(pixels[y1][x1].color, 0xe6e6e6)) {
             return false;
@@ -135,11 +135,11 @@ public class DesTypeChecker {
         int height = pixels.length;
 
         int x1 = firstPixcel.x;
-        int y1 = firstPixcel.y + HelperUtil.transH(height, 95);
+        int y1 = firstPixcel.y + HelperUtil.transW(width, 95);
         int x2 = firstPixcel.x ;
-        int y2 = firstPixcel.y + HelperUtil.transH(height, 277);
+        int y2 = firstPixcel.y + HelperUtil.transW(width, 277);
         int x3 = firstPixcel.x ;
-        int y3 = firstPixcel.y + HelperUtil.transH(height, 225);
+        int y3 = firstPixcel.y + HelperUtil.transW(width, 225);
 
         if (!Color.compareColor(pixels[y1][x1].color, 0x767676)) {
             return false;
@@ -161,11 +161,11 @@ public class DesTypeChecker {
         int height = pixels.length;
 
         int x1 = firstPixcel.x;
-        int y1 = firstPixcel.y + HelperUtil.transH(height, 8);
+        int y1 = firstPixcel.y + HelperUtil.transW(width, 8);
         int x2 = firstPixcel.x + HelperUtil.transW(width, 35);
-        int y2 = firstPixcel.y + HelperUtil.transH(height, 184);
+        int y2 = firstPixcel.y + HelperUtil.transW(width, 184);
         int x3 = firstPixcel.x + HelperUtil.transW(width, -3);
-        int y3 = firstPixcel.y + HelperUtil.transH(height, 171);
+        int y3 = firstPixcel.y + HelperUtil.transW(width, 171);
 
         if (!Color.compareColor(pixels[y1][x1].color, 0xffffff)) {
             return false;

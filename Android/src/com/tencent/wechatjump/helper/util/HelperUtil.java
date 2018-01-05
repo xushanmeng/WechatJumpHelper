@@ -12,7 +12,7 @@ public class HelperUtil {
     /**
      * 执行Shell命令，同步耗时操作
      */
-    public static final boolean execute(String cmd) {
+    public static final boolean execute(String... cmd) {
         try {
             Process process = Runtime.getRuntime().exec(cmd);
             int result = process.waitFor();
