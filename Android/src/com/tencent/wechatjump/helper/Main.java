@@ -22,37 +22,37 @@ import javax.imageio.ImageIO;
 public class Main {
 
     public static void main(String[] args) {
-        if(DebugUtil.DEBUG){
+        if (DebugUtil.DEBUG) {
             new Helper(1).start();
             return;
         }
         if (!Constants.BASE_DIR.exists()) {
             Constants.BASE_DIR.mkdirs();
         }
-        try {
-            String adb = null;
-            String system = System.getProperty("os.name");
-            if (system.contains("Windows")) {
-                adb = "resource/adb_windows";
-            } else if (system.contains("Mac")) {
-                adb = "resource/adb_mac";
-            } else {
-                System.out.println("该程序暂不支持" + system);
-                return;
-            }
-            if(Constants.ADB_PATH.exists()){
-                Constants.ADB_PATH.delete();
-            }
-            InputStream is = Main.class.getClassLoader().getResourceAsStream(adb);
-            boolean result = FileUtil.copy(is, new FileOutputStream(Constants.ADB_PATH));
-            if (!result) {
+        if (!Constants.ADB_PATH.exists()) {
+            try {
+                String adb = null;
+                String system = System.getProperty("os.name");
+                if (system.contains("Windows")) {
+                    adb = "resource/adb_windows";
+                } else if (system.contains("Mac")) {
+                    adb = "resource/adb_mac";
+                } else {
+                    System.out.println("该程序暂不支持" + system);
+                    return;
+                }
+
+                InputStream is = Main.class.getClassLoader().getResourceAsStream(adb);
+                boolean result = FileUtil.copy(is, new FileOutputStream(Constants.ADB_PATH));
+                if (!result) {
+                    System.out.println("adb解压失败");
+                    return;
+                }
+                Constants.ADB_PATH.setExecutable(true);
+            } catch (Exception e) {
                 System.out.println("adb解压失败");
                 return;
             }
-            Constants.ADB_PATH.setExecutable(true);
-        } catch (Exception e) {
-            System.out.println("adb解压失败");
-            return;
         }
         ArrayList<String> devices = getConnectedDevices();
         if (devices.size() == 1) {
@@ -177,7 +177,8 @@ public class Main {
                     startCount = true;
                 } else if (startCount && !line.trim().isEmpty()
                         && !line.contains("unauthorized")
-                        && !line.contains("offline")) {
+                        && !line.contains("offline")
+                        && !line.contains("* daemon")) {
                     String seg[] = line.split("\t");
                     deviceName = seg[0];
                     devices.add(deviceName);
