@@ -5,6 +5,8 @@
  微信跳一跳技术讨论QQ群148698890
  
  [更新日志](changelog.md)
+ 
+ Windows一键开始请移步[release](release)
 
 ## 功能简介
 
