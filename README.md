@@ -7,6 +7,8 @@
  [更新日志](changelog.md)
  
  Windows一键开始请移步[release](release)
+ 
+ 用户常见问题请先查询[FAQ](FAQ.md)
 
 ## 功能简介
 
