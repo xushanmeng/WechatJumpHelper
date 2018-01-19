@@ -3,8 +3,8 @@
  [GitHub 项目地址](https://github.com/xushanmeng/WechatJumpHelper)
  
  微信跳一跳技术讨论QQ群
- 148698890(已满)
- 121385998
+ * 148698890(已满)
+ * 121385998
  
  [更新日志](changelog.md)
  
